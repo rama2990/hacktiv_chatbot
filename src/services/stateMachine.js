@@ -157,13 +157,15 @@ function handleRecapReupload(deps, session, { text, files }) {
       const notes = JSON.stringify({ issues: result.issues, suggestions: result.suggestions });
       if (prev) {
         deps.models.updateDocument(prev.id, { status: result.status, notes });
-        } else {
-          const docRow = deps.models.addDocument({
-            sessionId: session.id, jenis: doc.key, path: `pending-${Date.now()}`,
-            mime: files[0].mimetype, status: result.status, notes,
-          });
-          if (deps.onSaveDocument) deps.onSaveDocument(docRow, files[0]);
-        }
+        const updated = deps.models.getDocuments(session.id).find((x) => x.id === prev.id);
+        if (deps.onSaveDocument) deps.onSaveDocument(updated ?? prev, files[0]);
+      } else {
+        const docRow = deps.models.addDocument({
+          sessionId: session.id, jenis: doc.key, path: `pending-${Date.now()}`,
+          mime: files[0].mimetype, status: result.status, notes,
+        });
+        if (deps.onSaveDocument) deps.onSaveDocument(docRow, files[0]);
+      }
       botSay(deps, session.id, result.feedbackText);
       return recapReply(deps, session, `${result.feedbackText}\n\n`);
     });
