@@ -96,7 +96,7 @@ D:\Project\Chatbot\
 | `PROFESSION` | Tanya profesi (tombol pilihan) | pilihan/teks | → `CHECKLIST` |
 | `CHECKLIST` | Tampilkan checklist dokumen profesi | — | → `COLLECTING` |
 | `COLLECTING` | Minta dokumen satu per satu sesuai urutan checklist | file (bisa beberapa sekaligus) | cocok → analisis → feedback → dokumen berikutnya; tidak relevan → diminta ulang |
-| `RECAP` | Rekap status semua dokumen + saran | teks / upload ulang | upload ulang → `COLLECTING` (satu dokumen); "selesai" → `DONE` |
+| `RECAP` | Rekap status semua dokumen + saran | teks / upload ulang | upload ulang → analisis ulang dokumen itu → kembali `RECAP`; "selesai" → `DONE` |
 | `DONE` | Salam penutup + ringkasan kode sesi | — | — |
 
 ### Alur upload file (state `COLLECTING`)
