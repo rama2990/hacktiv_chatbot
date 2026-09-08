@@ -1,5 +1,7 @@
 .superpowers/
 node_modules/
 .env
-src/uploads/
+src/data/
+src/uploads/*
+!src/uploads/.gitkeep
 *.db
