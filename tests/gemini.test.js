@@ -48,3 +48,15 @@ test('lempar LLM_UNAVAILABLE bila keduanya gagal', async () => {
     /LLM_UNAVAILABLE/,
   );
 });
+
+test('konversi part multimodal ke format OpenAI', async () => {
+  const { partToOpenAI } = require('../src/services/gemini');
+  const textPart = partToOpenAI({ text: 'hai' });
+  assert.deepEqual(textPart, { type: 'text', text: 'hai' });
+  const pdfPart = partToOpenAI({ inlineData: { mimeType: 'application/pdf', data: 'QmFzZTY0' } });
+  assert.equal(pdfPart.type, 'file');
+  assert.equal(pdfPart.file.file_data, 'data:application/pdf;base64,QmFzZTY0');
+  const imgPart = partToOpenAI({ inlineData: { mimeType: 'image/png', data: 'QmFzZTY0' } });
+  assert.equal(imgPart.type, 'image_url');
+  assert.equal(imgPart.image_url.url, 'data:image/png;base64,QmFzZTY0');
+});

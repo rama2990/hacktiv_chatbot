@@ -23,7 +23,10 @@ function partToOpenAI(part) {
   if (part.inlineData) {
     const dataUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
     const type = part.inlineData.mimeType === 'application/pdf' ? 'file' : 'image_url';
-    return { type, [type === 'file' ? 'file' : 'image_url']: { url: dataUrl } };
+    if (type === 'file') {
+      return { type: 'file', file: { filename: 'document.pdf', file_data: dataUrl } };
+    }
+    return { type: 'image_url', image_url: { url: dataUrl } };
   }
   return { type: 'text', text: '' };
 }
@@ -71,4 +74,4 @@ async function generateContent({ parts, fetchImpl = fetch }) {
   }
 }
 
-module.exports = { generateContent };
+module.exports = { generateContent, partToOpenAI };
