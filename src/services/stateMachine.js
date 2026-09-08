@@ -105,7 +105,7 @@ async function handleCollecting(deps, session, { text, files }) {
       mimeType: file.mimetype,
       llm: deps.llm,
     });
-    deps.models.addDocument({
+    const docRow = deps.models.addDocument({
       sessionId: session.id,
       jenis: doc.key,
       path: `pending-${Date.now()}`,
@@ -113,6 +113,7 @@ async function handleCollecting(deps, session, { text, files }) {
       status: result.status,
       notes: JSON.stringify({ issues: result.issues, suggestions: result.suggestions }),
     });
+    if (deps.onSaveDocument) deps.onSaveDocument(docRow, file);
     deps.models.updateSession(session.id, { currentIndex: cur.currentIndex + 1 });
     const next = deps.models.getSession(session.id);
     const feedback = result.feedbackText;
@@ -156,12 +157,13 @@ function handleRecapReupload(deps, session, { text, files }) {
       const notes = JSON.stringify({ issues: result.issues, suggestions: result.suggestions });
       if (prev) {
         deps.models.updateDocument(prev.id, { status: result.status, notes });
-      } else {
-        deps.models.addDocument({
-          sessionId: session.id, jenis: doc.key, path: `pending-${Date.now()}`,
-          mime: files[0].mimetype, status: result.status, notes,
-        });
-      }
+        } else {
+          const docRow = deps.models.addDocument({
+            sessionId: session.id, jenis: doc.key, path: `pending-${Date.now()}`,
+            mime: files[0].mimetype, status: result.status, notes,
+          });
+          if (deps.onSaveDocument) deps.onSaveDocument(docRow, files[0]);
+        }
       botSay(deps, session.id, result.feedbackText);
       return recapReply(deps, session, `${result.feedbackText}\n\n`);
     });

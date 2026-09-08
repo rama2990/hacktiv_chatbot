@@ -27,6 +27,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
+const { router: sessionRouter } = require('./src/routes/session');
+const { router: chatRouter } = require('./src/routes/chat');
+app.use(sessionRouter);
+app.use(chatRouter);
+
 module.exports = { app };
 
 if (require.main === module) {
