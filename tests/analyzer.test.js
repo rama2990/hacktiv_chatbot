@@ -59,3 +59,11 @@ test('status di luar nilai valid dipetakan ke perlu_review_manual', async () => 
   });
   assert.equal(res.status, 'perlu_review_manual');
 });
+
+test('LLM_UNAVAILABLE diteruskan, tidak diubah jadi perlu_review_manual', async () => {
+  const llm = { generateContent: async () => { throw new Error('LLM_UNAVAILABLE'); } };
+  await assert.rejects(
+    () => analyzeDocument({ professionKey: 'karyawan', docKey: 'ktp', fileBuffer: Buffer.from('x'), mimeType: 'image/png', llm }),
+    { message: 'LLM_UNAVAILABLE' },
+  );
+});

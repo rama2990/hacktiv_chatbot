@@ -8,7 +8,7 @@
     "test": "node --test --test-concurrency=1 \"tests/**/*.test.js\""
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=21"
   },
   "dependencies": {
     "better-sqlite3": "^12.0.0",

@@ -119,3 +119,12 @@ test('PROFESSION: input tak dikenal 2x → dipaksa pilih opsi', async () => {
   assert.equal(res.state, 'PROFESSION');
   assert.ok(res.reply.includes('pilih') || res.reply.includes('Pilih'));
 });
+
+test('ASK_CODE: kode sesi sendiri -> PROFESSION dengan opsi', async () => {
+  const session = models.createSession({ id: 'ss', code: 'KPR-SSS001', cookieToken: 'ts' });
+  models.updateSession('ss', { state: 'ASK_CODE' });
+  const res = await sm.handleMessage({ session: models.getSession('ss'), text: 'KPR-SSS001', deps: fakeDots() });
+  assert.equal(res.state, 'PROFESSION');
+  assert.ok(res.reply.includes('saat ini'));
+  assert.ok(res.options.length >= 4);
+});

@@ -215,10 +215,13 @@ async function handleMessage({ session, text = '', files = [], deps }) {
       const target = deps.models.getSessionByCode(t);
       if (target) {
         askCodeTries.delete(session.id);
-        if (target.id !== session.id) {
-          // tandai sesi sementara ini tidak dipakai, lanjut sesi lama
-          deps.models.updateSession(session.id, { state: 'DONE_ABORTED' });
+        if (target.id === session.id) {
+          deps.models.updateSession(session.id, { state: 'PROFESSION' });
+          return reply(deps, session, 'Ini adalah kode sesi Anda saat ini. Mari mulai: apa profesi Anda?',
+            { options: professionOptions() });
         }
+        // tandai sesi sementara ini tidak dipakai, lanjut sesi lama
+        deps.models.updateSession(session.id, { state: 'DONE_ABORTED' });
         const old = deps.models.getSession(target.id);
         return {
           reply: `Sesi ditemukan. Melanjutkan sesi ${old.code} dari posisi terakhir.`,

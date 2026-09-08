@@ -61,7 +61,8 @@ async function analyzeDocument({ professionKey, docKey, fileBuffer, mimeType, ll
         suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
       };
       return { ...result, feedbackText: feedbackText(doc, result) };
-    } catch {
+    } catch (err) {
+      if (err && err.message === 'LLM_UNAVAILABLE') throw err;
       // retry sekali; jika gagal lagi keluar dari loop
     }
   }
