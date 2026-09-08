@@ -7,6 +7,11 @@ const textInput = $('#text-input');
 const fileInput = $('#file-input');
 const fileNamesEl = $('#file-names');
 
+// API base: saat dibuka via Live Server (port 5500/5501), API Express ada di :3000.
+// Saat disajikan oleh Express sendiri (http://localhost:3000), pakai relative path.
+const API_BASE = ['5500', '5501', '3001'].includes(location.port) ? 'http://localhost:3000' : '';
+const CREDENTIALS = API_BASE ? 'include' : 'same-origin';
+
 function addMessage(role, content) {
   const div = document.createElement('div');
   div.className = `msg ${role}`;
@@ -46,7 +51,7 @@ async function send({ message = '', files = [] } = {}) {
   files.forEach((f) => fd.append('files', f));
   textInput.value = ''; fileInput.value = ''; fileNamesEl.textContent = '';
   try {
-    const res = await fetch('/api/chat', { method: 'POST', body: fd, credentials: 'same-origin' });
+    const res = await fetch(`${API_BASE}/api/chat`, { method: 'POST', body: fd, credentials: CREDENTIALS });
     const data = await res.json();
     if (!res.ok) { addMessage('bot', data.error || 'Terjadi kesalahan.'); return; }
     addMessage('bot', data.reply);
@@ -68,11 +73,11 @@ form.addEventListener('submit', (e) => {
 });
 
 (async function init() {
-  const res = await fetch('/api/session', {
+  const res = await fetch(`${API_BASE}/api/session`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: '{}',
-    credentials: 'same-origin',
+    credentials: CREDENTIALS,
   });
   const data = await res.json();
   renderSessionCode(data.code);
