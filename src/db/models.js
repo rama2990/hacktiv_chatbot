@@ -17,8 +17,10 @@ const updateSession = (id, { state, profession, currentIndex } = {}) => {
   return getSession(id);
 };
 
-const addMessage = (sessionId, role, content) =>
-  db.prepare('INSERT INTO messages (session_id, role, content) VALUES (?, ?, ?)').run(sessionId, role, content);
+const addMessage = (sessionId, role, content) => {
+  const info = db.prepare('INSERT INTO messages (session_id, role, content) VALUES (?, ?, ?)').run(sessionId, role, content);
+  return db.prepare('SELECT * FROM messages WHERE id = ?').get(info.lastInsertRowid);
+};
 
 const getMessages = (sessionId) =>
   db.prepare('SELECT * FROM messages WHERE session_id = ? ORDER BY id ASC').all(sessionId);
